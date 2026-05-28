@@ -1,0 +1,87 @@
+<div class="proxy-detail-container" fxLayout="column" fxLayoutAlign="start stretch" *ngIf="proxy">
+  <div fxLayout="row" fxLayoutAlign="start center">
+    <h2 fxFlex="70" class="mat-title">
+      {{proxy.name}}
+      <button mat-icon-button routerLink="/proxies">
+        <mat-icon matTooltip="Return to proxies">keyboard_return</mat-icon>
+      </button>
+    </h2>
+    <div fxFlex="30" fxLayoutAlign="end center">
+      <button mat-icon-button color="accent" [matMenuTriggerFor]="menu">
+        <mat-icon>menu</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="editProxy()">Edit Proxy</button>
+        <button mat-menu-item (click)="openCreateToxicDialog()">Add Toxic</button>
+        <button mat-menu-item (click)="deleteProxy()">Delete Proxy</button>
+      </mat-menu>
+    </div>
+  </div>
+
+  <mat-divider fxFlex="100"></mat-divider>
+
+  <div fxLayout="column" class="details">
+    <h3 class="mat-title">Details</h3>
+    <mat-list>
+      <mat-list-item><span>Listen:</span> {{proxy.listen}}</mat-list-item>
+      <mat-list-item><span>Upstream:</span> {{proxy.upstream}}</mat-list-item>
+      <mat-list-item><span>Enabled:</span> {{proxy.enabled}}</mat-list-item>
+    </mat-list>
+  </div>
+
+  <div fxLayout="column" class="toxics">
+    <div class="toxic-menu">
+      <h3 class="mat-title">Toxics</h3>
+    </div>
+
+    <table *ngIf="toxicDataSource != null && toxicDataSource.data.length > 0" fxFlex mat-table [dataSource]="toxicDataSource" class="mat-elevation-z8">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Name</th>
+        <td mat-cell *matCellDef="let toxic">{{toxic.name.split('_').join(' ')}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="type">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let toxic">{{toxic.type.split('_').join(' ')}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="stream">
+        <th mat-header-cell *matHeaderCellDef>Stream</th>
+        <td mat-cell *matCellDef="let toxic">{{toxic.stream}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="toxicity">
+        <th mat-header-cell *matHeaderCellDef>Toxicity</th>
+        <td mat-cell *matCellDef="let toxic">{{toxic.toxicity}}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="attributes">
+        <th mat-header-cell *matHeaderCellDef>Attributes</th>
+        <td mat-cell *matCellDef="let toxic">
+          <div *ngFor="let ta of objectEntries(toxic.attributes)">
+            <span>{{ta[0].split('_').join(' ')}}:</span> {{ta[1]}}
+          </div>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="delete">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let toxic">
+          <button mat-icon-button matTooltip="Edit toxic" (click)="editToxicDialog(toxic)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button matTooltip="Delete toxic" (click)="deleteToxic(toxic)">
+            <mat-icon>close</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div *ngIf="toxicDataSource == null || toxicDataSource.data.length == 0">
+      <p class="mat-body">No toxics setup, use the menu to add a toxic.</p>
+    </div>
+  </div>
+</div>
